@@ -197,6 +197,15 @@ Quando dois trechos diferentes geram o mesmo hash, chamamos isso de
 caractere por caractere para confirmar se as palavras são realmente iguais.
 !!!
 
+## Comparação de Algoritmos de Busca
+
+| Algoritmo              | Melhor caso                | Caso médio                      | Pior caso            |
+|------------------------|----------------------------|---------------------------------|----------------------|
+| **Knuth–Morris–Pratt** | {red}($O(n + m)$)                 | $O(n + m)$                      | {green}($O(n + m)$)           |
+| **Boyer–Moore**        | {green}($O(n / m)$) *(sublinear)*   | $O(n + m)$                      | {red}($O(n × m)$)           |
+| **Rabin–Karp**         | {red}($O(n + m)$)                 | $O(n + m)$ *(esperado)*         | {red}($O(n × m)$)           |
+
+
 ## Problema: recalcular tudo a cada passo?
 
 Agora que conhecemos o conceito de hash, surge uma ideia natural:
