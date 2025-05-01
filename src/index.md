@@ -1,40 +1,38 @@
 # Busca de Padrões em Texto
 
 ## Por que precisamos buscar padrões com rapidez?
-Imagine que você esteja procurando uma agulha em um palheiro — mas que este palheiro seja do tamanho de um estádio de futebol lotado. Quanto mais rápido você encontrar essa agulha, menos tempo você perderá e mais eficiente será sua busca.
+Quando você pressiona Ctrl+F para buscar uma palavra em um documento de texto, espera resultados instantâneos, não é? Mas se o algoritmo de busca for ineficiente, você terá que esperar vários segundos – ou até minutos – para operações que deveriam ser imediatas.
 
-A busca eficiente de padrões é essencial em diversas situações do cotidiano e da tecnologia:
+A busca eficiente de padrões é crítica em aplicações reais como:
 
-- **Encontrar um nome na lista de contatos do celular**: digitar as primeiras letras traz o contato desejado instantaneamente, mesmo com centenas de entradas.
+- **Análise de DNA**: Identificar sequências específicas em genomas com bilhões de nucleotídeos, essencial para pesquisas médicas e diagnósticos.
 
-- **Pesquisar um termo em conversas de aplicativos de mensagem**: localizar rapidamente onde alguém mencionou “endereço” para resgatar informações importantes.
+- **Sistemas antivírus**: Detectar assinaturas de malware em tempo real em arquivos sendo verificados, onde atrasos podem comprometer a segurança.
 
-- **Procurar uma receita específica em um bloco de anotações**: ao buscar “bolo de cenoura”, sem ter que rolar manualmente por todas as receitas.
+- **Indexação de mecanismos de busca**: O Google processa bilhões de páginas web e precisa encontrar termos específicos em frações de segundo.
 
-- **Filtrar ocorrências em códigos-fonte**: IDEs destacam todas as referências de uma variável ou função em projetos com milhares de linhas de código.
+- **Compressão de dados**: Algoritmos como LZ77 precisam identificar padrões repetidos para substituí-los por referências mais curtas.
 
-Se a busca de padrões for lenta, corremos o risco de:
+Se a busca de padrões for lenta, as consequências são graves:
 
-1. Obter informações desatualizadas, tornando decisões menos precisas.
+1. Em sequenciadores de DNA, resultados atrasados podem impactar decisões médicas urgentes.
 
-2. Sobrecarregar recursos computacionais, degradando a experiência do usuário.
+2. Em sistemas de segurança, ameaças podem passar despercebidas enquanto o sistema ainda está analisando dados anteriores.
 
-3. Atrasar processos críticos, como segurança e atendimento, comprometendo a eficácia geral.
+3. Em indexadores web, sites não seriam atualizados com frequência suficiente, resultando em informações desatualizadas.
 
-Por isso, aprender algoritmos capazes de localizar padrões em grandes volumes de dados de maneira rápida e confiável é fundamental para qualquer sistema moderno.
+Por isso, algoritmos capazes de localizar padrões em grandes volumes de dados com eficiência são fundamentais para sistemas modernos.
 
 ??? Checkpoint
 
 Considere o seguinte texto:
 
 ```
-
 Era uma vez uma pequena cidade à beira-mar.
 Nessa cidade, uma jovem chamada Luna sonhava em viajar pelo mundo.
 Ela lia livros sobre aventuras, desenhava mapas e colecionava histórias antigas.
 Um dia, enquanto caminhava pela praia, Luna encontrou uma garrafa com uma carta dentro.
 A carta dizia: "Venha encontrar o tesouro escondido além do horizonte."
-
 ```
 
 Seu objetivo é encontrar todas as posições onde a palavra **garrafa**
@@ -42,6 +40,7 @@ aparece no texto acima.
 
 Considere que:
 
+- A ideia seria percorrer o texto para assim comparar as palavras até encontrar a correta.
 - Não diferencie letras maiúsculas de minúsculas (ou seja, "Garrafa" e
   "garrafa" contam).
 - Considere apenas aparições em que "garrafa" é uma palavra isolada.
@@ -52,7 +51,6 @@ Uma maneira possível de implementar essa busca seria utilizando o método de
 força bruta, verificando cada posição do texto caractere por caractere:
 
 ```c
-
 #include <stdio.h>
 #include <string.h>
 
@@ -83,7 +81,6 @@ int main() {
 
    return 0;
 }
-
 ```
 
 :::
@@ -101,15 +98,14 @@ Analisar a complexidade de tempo de um algoritmo nos ajuda a prever:
 - Se ele pode se tornar inviável conforme o tamanho do problema cresce.
 - Se precisamos procurar uma solução melhor.
 
-Em especial para algoritmos de busca em textos grandes, analisar a eficiência
-é fundamental para garantir que o programa funcione em um tempo razoável.
+Em especial para algoritmos de busca em textos grandes, como aqueles usados em bancos de dados genômicos com mais de 3 bilhões de pares de bases, analisar a eficiência é fundamental para garantir que o programa funcione em um tempo razoável.
 
 ??? Atividade
-Quantas vezes o algoritmo percorre o texto (no laço principal)?
+No algoritmo de força bruta que acabamos de ver, quantas vezes o algoritmo percorre o texto (no laço principal)?
 
 ::: Gabarito
 O algoritmo percorre o texto uma vez para cada posição possível de início de
-comparação, ou seja, aproximadamente _n_ vezes.
+comparação, ou seja, aproximadamente _n_ vezes, onde _n_ é o tamanho do texto.
 :::
 ???
 
@@ -134,9 +130,8 @@ caracteres.
 
 ## Existe uma forma de comparar mais rápido?
 
-Quando usamos o método de força bruta, precisamos comparar caractere por
-caractere a cada posição no texto. Isso pode ser muito lento para textos
-grandes.
+Quando usamos o método de **força bruta**, precisamos comparar caractere por
+caractere a cada posição no texto. Para um genoma humano de 3 bilhões de bases e um padrão de interesse de 100 nucleotídeos, isso significaria até 300 bilhões de comparações!
 
 Mas será que existe uma maneira de comparar pedaços do texto de forma mais
 rápida, sem olhar cada letra?
@@ -171,8 +166,8 @@ Agora calcule:
 - CAB = C(3) + A(1) + B(2) = 6
 - ACE = A(1) + C(3) + E(5) = 9
 - BED = B(2) + E(5) + D(4) = 11
-  :::
-  ???
+:::
+???
 
 ??? Atividade
 Se duas palavras tiverem **hashes diferentes**, o que podemos afirmar sobre
@@ -187,7 +182,7 @@ diferentes.
 Se duas palavras tiverem **hashes iguais**, podemos afirmar que as palavras
 são iguais?
 ::: Gabarito
-Não necessariamente. Duas palavras diferentes podem ter o mesmo hash.
+Não necessariamente. Duas palavras diferentes podem ter o mesmo hash. Por exemplo, "BAC" e "CAB" teriam o mesmo hash (6) usando nossa função de soma.
 :::
 ???
 
@@ -231,37 +226,32 @@ calculado** na janela anterior.
 Antes de falarmos em hash, precisamos entender bem o que é uma **janela deslizante** (também
 chamada de sliding window).
 
-Imagine que estamos olhando o texto aos poucos, sempre de pedaço em pedaço.
-
-Suponha que nosso padrão tenha 3 letras. Vamos percorrer o texto olhando
-sempre 3 letras de cada vez.
+Imagine que estamos analisando uma sequência de DNA e queremos encontrar um gene específico de 4 nucleotídeos. Vamos percorrer o texto olhando sempre 4 letras de cada vez.
 
 **Texto de exemplo:**
 
 ```
-Texto:   A  B  C  D  E  F
+DNA:     A  C  G  T  C  A
 Índices: 0  1  2  3  4  5
 ```
 
-Agora aplicamos uma janela de tamanho 3:
+Agora aplicamos uma janela de tamanho 4:
 
 ```
-Trecho 1: A B C
+Trecho 1: A C G T
 ```
 
 Depois deslizamos a janela para frente:
 
 ```
-Trecho 2:   B C D
+Trecho 2:   C G T C
 ```
 
 Depois deslizamos novamente:
 
 ```
-Trecho 3:     C D E
+Trecho 3:     G T C A
 ```
-
-E assim por diante.
 
 A cada passo:
 
@@ -277,31 +267,32 @@ rapidamente.
 Se o hash é a soma dos valores das letras:
 
 ```
-Hash("ABC") = valor(A) + valor(B) + valor(C)
-Hash("BCD") = valor(B) + valor(C) + valor(D)
+Hash("ACGT") = valor(A) + valor(C) + valor(G) + valor(T)
+Hash("CGTC") = valor(C) + valor(G) + valor(T) + valor(C)
 ```
 
-Note que:
+Note que para obter o novo hash:
 
 - Subtraímos o valor do "A" (que saiu da janela).
-- Somamos o valor do "D" (que entrou na janela).
+- Somamos o valor do "C" (que entrou na janela).
 
 Assim, não precisamos recalcular tudo! Só uma subtração e uma soma.
 
 ??? CheckPoint
 
-Se o hash do trecho "ABC" for 6, e os valores forem:
+Se o hash do trecho "ACGT" for 31, e os valores forem:
 
 - A = 1
-- B = 2
 - C = 3
-- D = 4
+- G = 7
+- T = 20
+- C = 3
 
-Qual seria o hash do trecho "BCD" usando a atualização eficiente?
+Qual seria o hash do trecho "CGTC" usando a atualização eficiente?
 
 ::: Gabarito
 
-Hash("BCD") = Hash("ABC") - valor(A) + valor(D) = 6 - 1 + 4 = 9
+Hash("CGTC") = Hash("ACGT") - valor( A ) + valor( C ) = 31 - 1 + 3 = 33
 :::
 ???
 
@@ -349,7 +340,8 @@ Qual caractere saiu da janela, e qual caractere entrou?
 
 ::: Gabarito
 
-Saiu: 'E' Entrou: ' ' (espaço)
+Saiu: 'E' 
+Entrou: ' ' (espaço)
 :::
 ???
 
@@ -362,6 +354,8 @@ hash da nova janela de forma eficiente?
 
 Subtraímos o valor do caractere que saiu ('E') e somamos o valor do
 caractere que entrou (' ').
+
+Hash_novo = Hash_antigo - valor('E') + valor(' ')
 :::
 ???
 
@@ -380,8 +374,6 @@ A complexidade total passa a ser $O(n)$, muito melhor do que $O(n
 
 Agora que entendemos os conceitos fundamentais de hash e janela deslizante, vamos ver como o algoritmo de Rabin-Karp combina essas ideias de forma inteligente.
 
-
-
 ## Aprimorando o conceito de hash
 
 Na nossa abordagem inicial, usamos um hash simples: a soma dos valores das letras. Mas esse tipo de hash tem um problema sério.
@@ -398,6 +390,8 @@ Considere as palavras "ABC" e "CBA". Calcule o hash de cada uma delas usando nos
 
 Veja que duas palavras diferentes têm o mesmo hash! Isso significa que teríamos muitas colisões, tornando o algoritmo menos eficiente.
 
+Em sistemas bioinformáticos que analisam DNA, essas colisões poderiam fazer com que sequências diferentes fossem erroneamente identificadas como iguais.
+
 O algoritmo de Rabin-Karp usa uma função hash mais sofisticada, que leva em consideração tanto o valor quanto a posição de cada caractere.
 
 ## Hash polinomial
@@ -413,6 +407,9 @@ Ou de forma mais geral, para uma string de comprimento m:
 Onde:
 - s[i] é o valor ASCII do caractere na posição i
 - b é a base (vamos usar 256)
+
+Esse método é semelhante a como interpretamos números decimais:
+- O número 123 significa 1×10² + 2×10¹ + 3×10⁰
 
 ??? Atividade
 
@@ -440,7 +437,9 @@ Observe que agora "ABC" e "CBA" têm hashes diferentes! O hash polinomial é mui
 
 A beleza do hash polinomial é que também podemos atualizá-lo de forma eficiente quando a janela desliza!
 
-Imagine que já calculamos o hash da janela atual: s[i]...s[i+m-1]
+Imagine um sistema de vigilância de rede que analisa pacotes de dados em tempo real, procurando por assinaturas de ataques. Com milhões de pacotes por segundo, precisamos de atualizações instantâneas.
+
+Se já calculamos o hash da janela atual: s[i]...s[i+m-1]
 E queremos calcular o hash da próxima janela: s[i+1]...s[i+m]
 
 Podemos fazer isso em tempo constante:
@@ -476,7 +475,9 @@ Que é exatamente B × 10² + C × 10¹ + D × 10⁰ = 2 × 100 + 3 × 10 + 4 ×
 
 ## O problema do overflow
 
-Na prática, quando lidamos com strings longas, os valores do hash podem ficar extremamente grandes e causar overflow (estouro de memória). Para evitar isso, o algoritmo de Rabin-Karp usa uma técnica chamada **módulo**.
+Na prática, quando lidamos com strings longas, os valores do hash podem ficar extremamente grandes e causar overflow (estouro de memória). Em um sequenciador de DNA analisando genomas completos, esses números poderiam facilmente ultrapassar o limite das variáveis numéricas.
+
+Para evitar isso, o algoritmo de Rabin-Karp usa uma técnica chamada **módulo**.
 
 Basicamente, aplicamos o operador módulo % a um número primo grande (vamos chamar de q):
 
@@ -497,7 +498,9 @@ Hash("ABC") = (A × 10² + B × 10¹ + C × 10⁰) % 13
 
 A fórmula de atualização também precisa ser modificada para incluir o módulo:
 
-h_novo = ((h_atual - s[i] × b^(m-1) % q) × b + s[i+m]) % q
+h_novo = ((h_atual - s[i] × b^(m-1) % q + q) × b + s[i+m]) % q
+
+O termo "+ q" é adicionado para garantir que o resultado da subtração não seja negativo antes de aplicar o módulo.
 
 ## Implementando o algoritmo de Rabin-Karp
 
@@ -508,73 +511,58 @@ A ideia central do Rabin-Karp é:
 1. Calcular o hash do padrão
 2. Calcular o hash da primeira janela no texto
 3. Para cada posição do texto:
-   a. Comparar o hash da janela atual com o hash do padrão
-   b. Se forem iguais, verificar caractere por caractere (para evitar falsos positivos)
-   c. Atualizar o hash para a próxima janela
+
+   **a.** Comparar o hash da janela atual com o hash do padrão
+
+   **b.** Se forem iguais, verificar caractere por caractere (para evitar falsos positivos devido a colisões)
+
+   **c.** Atualizar o hash para a próxima janela
 
 ??? Atividade
 
-Vamos traçar manualmente a execução do algoritmo de Rabin-Karp para encontrar o padrão "ola" no texto "ola mundo olaria":
+Vamos traçar manualmente a execução do algoritmo de Rabin-Karp para encontrar o padrão "DNA" no texto "GGATCGDNAACGT":
 
 Para simplificar, vamos usar:
 - Base b = 10
 - Módulo q = 11
-- Valores: espaço = 0, a = 1, d = 4, e = 5, i = 9, l = 12, m = 13, n = 14, o = 15, r = 18, u = 21
+- Valores: A = 1, C = 3, D = 4, G = 7, N = 14, T = 20
 
-Primeiro, calculamos o hash do padrão "ola":
-- Hash("ola") = (o × 10² + l × 10¹ + a × 10⁰) % 11
-              = (15 × 100 + 12 × 10 + 1 × 1) % 11
-              = (1500 + 120 + 1) % 11
-              = 1621 % 11
-              = 5
+Primeiro, calculamos o hash do padrão "DNA":
+- Hash("DNA") = (D × 10² + N × 10¹ + A × 10⁰) % 11
+              = (4 × 100 + 14 × 10 + 1 × 1) % 11
+              = (400 + 140 + 1) % 11
+              = 541 % 11
+              = 2
 
 ::: Gabarito
 
-1. Hash do padrão "ola" = 5
+1. Hash do padrão "DNA" = 2
 
-2. Hash da primeira janela "ola":
-   - Hash("ola") = (15 × 100 + 12 × 10 + 1 × 1) % 11 = 5
-   - Como o hash da janela é igual ao hash do padrão, verificamos caractere por caractere:
-   - "ola" == "ola" → Encontrado na posição 0!
+2. Hash da primeira janela "GGA":
+   - Hash("GGA") = (7 × 100 + 7 × 10 + 1 × 1) % 11
+   - = (700 + 70 + 1) % 11
+   - = 771 % 11
+   - = 1
+   - Hash diferente do padrão, continuamos.
 
-3. Atualizamos o hash para a próxima janela "la ":
-   - h_novo = ((5 - 15 × 10² % 11) × 10 + 0) % 11
-   - = ((5 - 15 × 100 % 11) × 10 + 0) % 11
-   - = ((5 - 1500 % 11) × 10 + 0) % 11
-   - = ((5 - 3) × 10 + 0) % 11  (pois 1500 % 11 = 3)
-   - = (2 × 10) % 11
-   - = 20 % 11
-   - = 9
+3. Atualizamos o hash para a próxima janela "GAT":
+   - h_novo = ((1 - 7 × 100 % 11 + 11) × 10 + 20) % 11
+   - = ((1 - 700 % 11 + 11) × 10 + 20) % 11
+   - = ((1 - 0 + 11) × 10 + 20) % 11
+   - = (12 × 10 + 20) % 11
+   - = (120 + 20) % 11
+   - = 140 % 11
+   - = 8
+   - Hash diferente do padrão, continuamos.
 
-4. Comparamos: Hash("la ") = 9 ≠ 5 → Não é igual ao hash do padrão, continuamos.
+4. [Continue o processo para as demais janelas...]
 
-5. [Continue o processo para as demais janelas...]
-
-10. Para a janela "ola" que começa na posição 7:
-    - Hash = 5
-    - Como o hash é igual ao hash do padrão, verificamos caractere por caractere:
-    - "ola" == "ola" → Encontrado na posição 7!
+5. Para a janela "DNA" que começa na posição 5:
+   - Hash = 2
+   - Como o hash é igual ao hash do padrão, verificamos caractere por caractere:
+   - "DNA" == "DNA" → Encontrado na posição 5!
 :::
 ???
-
-A tabela completa de execução seria:
-
-| Posição | Janela | Hash | Hash igual ao padrão? | Verificação | Encontrado? |
-|---------|--------|------|----------------------|-------------|-------------|
-| 0       | ola    | 5    | Sim                  | ola == ola  | Sim! (0)    |
-| 1       | la     | 9    | Não                  | -           | -           |
-| 2       | a m    | 1    | Não                  | -           | -           |
-| 3       |  mu    | 3    | Não                  | -           | -           |
-| 4       | mun    | 8    | Não                  | -           | -           |
-| 5       | und    | 2    | Não                  | -           | -           |
-| 6       | ndo    | 4    | Não                  | -           | -           |
-| 7       | do     | 1    | Não                  | -           | -           |
-| 8       | o o    | 6    | Não                  | -           | -           |
-| 9       |  ol    | 0    | Não                  | -           | -           |
-| 10      | ola    | 5    | Sim                  | ola == ola  | Sim! (10)   |
-| 11      | lar    | 8    | Não                  | -           | -           |
-| 12      | ari    | 6    | Não                  | -           | -           |
-| 13      | ria    | 7    | Não                  | -           | -           |
 
 ## Quando o Rabin-Karp é melhor?
 
@@ -584,30 +572,35 @@ O algoritmo de Rabin-Karp tem algumas características interessantes:
 - **Caso médio**: O(n + m) - esperado com uma boa função hash
 - **Pior caso**: O(n × m) - quando há muitas colisões ou quando o padrão aparece muitas vezes
 
-O algoritmo se destaca especialmente quando:
+O algoritmo se destaca especialmente em aplicações reais como:
 
-1. Estamos buscando múltiplos padrões simultaneamente
-2. O padrão é relativamente longo (reduzindo a chance de colisões)
-3. O alfabeto é grande (como em textos binários)
+1. **Detecção de plágio**: sistemas que precisam verificar se um documento contém trechos copiados de vários outros documentos.
+
+2. **Sistemas de segurança de rede**: busca de múltiplas assinaturas de malware em pacotes de dados simultaneamente.
+
+3. **Busca em bancos de dados genômicos**: identificação de múltiplas sequências de interesse em genomas completos.
 
 ??? Atividade
 
 Considere os seguintes cenários. Em quais deles você acredita que o algoritmo de Rabin-Karp seria uma boa escolha?
 
-a) Buscar a palavra "algoritmo" em um texto de 1 milhão de caracteres.
-b) Buscar 100 palavras diferentes ao mesmo tempo em um texto.
-c) Verificar se um documento contém algum trecho plagiado de um conjunto de 1000 documentos.
-d) Buscar um padrão binário de 4 bits em um arquivo binário.
+**a)** Um antivírus verificando um arquivo contra uma única assinatura de malware.
+
+**b)** Um sistema de detecção de intrusão verificando pacotes de rede contra milhares de assinaturas de ataques conhecidos.
+
+**c)** Um verificador de plágio comparando um trabalho acadêmico a um banco de dados de artigos publicados.
+
+**d)** Buscar um pequeno padrão binário (4 bits) em um arquivo de executável.
 
 ::: Gabarito
 
-a) Não seria a melhor escolha. Para buscar um único padrão curto, outros algoritmos como KMP ou Boyer-Moore são geralmente mais eficientes.
+**a)** Não seria a melhor escolha. Para buscar um único padrão curto, outros algoritmos como KMP ou Boyer-Moore são geralmente mais eficientes.
 
-b) Boa escolha! O Rabin-Karp é excelente para buscar múltiplos padrões simultaneamente, pois pode reutilizar o hash da janela atual para comparar com os hashes de todos os padrões.
+**b)** Excelente escolha! O Rabin-Karp é ideal para buscar múltiplos padrões simultaneamente, pois pode reutilizar o hash da janela atual para comparar com os hashes de todos os padrões.
 
-c) Excelente escolha! Este é um caso clássico de detecção de substring que pode envolver milhares de comparações, onde o Rabin-Karp se destaca.
+**c)** Excelente escolha! Este é um caso clássico onde o Rabin-Karp se destaca, pois podemos buscar muitos trechos potencialmente plagiados de uma só vez.
 
-d) Não seria ideal. Com um padrão muito curto (4 bits) e um alfabeto pequeno (apenas 0 e 1), haveria muitas colisões, reduzindo a eficiência.
+**d)** Não seria ideal. Com um padrão muito curto (4 bits) e um alfabeto pequeno (apenas 0 e 1), haveria muitas colisões, reduzindo a eficiência.
 :::
 ???
 
@@ -617,9 +610,9 @@ Conforme vimos na tabela de comparação:
 
 | Algoritmo              | Melhor caso                | Caso médio                      | Pior caso            |
 |------------------------|----------------------------|---------------------------------|----------------------|
-| **Knuth–Morris–Pratt** | {red}($O(n + m)$)                 | $O(n + m)$                      | {green}($O(n + m)$)           |
-| **Boyer–Moore**        | {green}($O(n / m)$) *(sublinear)*   | $O(n + m)$                      | {red}($O(n × m)$)           |
-| **Rabin–Karp**         | {red}($O(n + m)$)                 | $O(n + m)$ *(esperado)*         | {red}($O(n × m)$)           |
+| **Knuth–Morris–Pratt** | {red}($O(n + m)$)          | $O(n + m)$                      | {green}($O(n + m)$)  |
+| **Boyer–Moore**        | {green}($O(n / m)$) *(sublinear)*   | $O(n + m)$                      | {red}($O(n × m)$)  |
+| **Rabin–Karp**         | {red}($O(n + m)$)          | $O(n + m)$ *(esperado)*         | {red}($O(n × m)$)    |
 
 O Rabin-Karp não é o algoritmo mais rápido em todos os cenários, mas tem suas vantagens específicas:
 
@@ -631,10 +624,13 @@ O Rabin-Karp não é o algoritmo mais rápido em todos os cenários, mas tem sua
 
 Para cada um dos cenários a seguir, escolha o algoritmo que você acredita ser mais adequado:
 
-a) Um editor de texto que precisa buscar uma única palavra em um documento.
-b) Um sistema de detecção de intrusão que precisa verificar pacotes de rede contra milhares de assinaturas de ataques conhecidos.
-c) Um verificador de plágio que compara um documento a um banco de dados de textos.
-d) Um sistema que precisa garantir que nunca demorará mais que O(n + m) em qualquer cenário.
+**a)** Um editor de texto que precisa buscar uma única palavra em um documento.
+
+**b)** Um sistema de detecção de intrusão que precisa verificar pacotes de rede contra milhares de assinaturas de ataques conhecidos.
+
+**c)** Um verificador de plágio que compara um documento a um banco de dados de textos.
+
+**d)** Um sistema médico que precisa garantir tempo de resposta consistente ao buscar padrões em exames de imagem.
 
 ::: Gabarito
 
@@ -644,9 +640,10 @@ b) **Rabin-Karp** seria a melhor escolha. A capacidade de verificar múltiplos p
 
 c) **Rabin-Karp** novamente seria excelente. Detecção de plágio envolve busca de múltiplos trechos potencialmente copiados, onde o Rabin-Karp se destaca.
 
-d) **Knuth-Morris-Pratt (KMP)** é a única escolha garantida aqui. É o único destes algoritmos que mantém O(n + m) mesmo no pior caso.
+d) **Knuth-Morris-Pratt (KMP)** é a única escolha garantida aqui. É o único destes algoritmos que mantém O(n + m) mesmo no pior caso, garantindo um tempo de resposta previsível.
 :::
 ???
+
 
 ## Implementação
 
@@ -710,7 +707,7 @@ void rabinKarp(char texto[], char padrao[]) {
 
 ??? Atividade
 
-Trace a execução do algoritmo no pseudocódigo acima para buscar o padrão "ola" no texto "ola mundo". Use base b = 10, módulo q = 7, e os valores numéricos das letras que definimos anteriormente.
+Trace a execução do algoritmo acima para buscar o padrão "ola" no texto "ola mundo". Use base b = 10, módulo q = 7, e os valores numéricos das letras que definimos anteriormente.
 
 ::: Gabarito
 
