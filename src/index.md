@@ -64,20 +64,10 @@ Usando essa abordagem, encontraríamos "garrafa" na posição em que aparece na 
 Antes de continuar, precisamos entender um conceito crucial chamado **janela deslizante** (sliding window).
 Imagine que estamos analisando um texto e queremos encontrar um padrão específico. A janela deslizante nos permite olhar apenas para um trecho de tamanho fixo do texto por vez, movendo essa "janela" um caractere de cada vez.
 
-![](janela-exemplo2.jpeg)
-![](X.drawio.png)
-
-
-
 Veja como funciona essa janela:
 
-:janela
 
-A cada passo:
-
-O primeiro caractere sai (à esquerda)
-Um novo caractere entra (à direita)
-O resto da janela permanece igual
+:nova_janela
 
 Essa técnica é fundamental tanto para o algoritmo de força bruta quanto para o Rabin-Karp, que veremos a seguir.
 ??? Atividade
@@ -105,37 +95,8 @@ Se todos os caracteres coincidirem, encontrou uma ocorrência do padrão
 
 Vamos analisar um exemplo de como a busca por força bruta funciona ao tentar encontrar o padrão "ACGT" no texto "GTATACGT":
 
-Passo 1: Comparamos "ACGT" com "GTAT"
 
-Texto:  GTATACGT
-Padrão: ACGT
-        x
-
-Mismatch logo no primeiro caractere (G ≠ A)! Avançamos para a próxima posição.
-
-Passo 2: Comparamos "ACGT" com "TATA"
-Texto:  GTATACGT
-Padrão:  ACGT
-         x
-Mismatch logo no primeiro caractere (T ≠ A)! Avançamos para a próxima posição.
-
-Passo 3: Comparamos "ACGT" com "ATAC"
-Texto:  GTATACGT
-Padrão:   ACGT
-          ✓✓x
-Match nos dois primeiros caracteres (A = A, T = C), mas mismatch no terceiro (A ≠ G).
-
-Passo 4: Comparamos "ACGT" com "TACG"
-Texto:  GTATACGT
-Padrão:    ACGT
-           x
-Mismatch logo no primeiro caractere (T ≠ A)! Avançamos para a próxima posição.
-
-Passo 5: Comparamos "ACGT" com "ACGT"
-Texto:  GTATACGT
-Padrão:     ACGT
-            ✓✓✓✓
-Match em todos os caracteres! Encontramos o padrão na posição 4.
+:bruta
 
 ??? Atividade
 Considere a complexidade do algoritmo de força bruta. Se o texto tem tamanho n e o padrão tem tamanho m:
