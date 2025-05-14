@@ -1,27 +1,24 @@
 # Busca de Padrões em Texto
 
-## Por que precisamos buscar padrões com rapidez?
-Quando você pressiona Ctrl+F para buscar uma palavra em um documento de texto, espera resultados instantâneos, não é? Mas se o algoritmo de busca for ineficiente, você terá que esperar vários segundos – ou até minutos – para operações que deveriam ser imediatas.
+## Busca de Padrões em Texto: Por que é tão importante otimizar?
+Imagine que você precisa encontrar, em segundos, todas as ocorrências de uma palavra ou sequência de caracteres em documentos enormes ou em bases de dados complexas. Situações reais em que a velocidade de busca faz toda a diferença:
 
-A busca eficiente de padrões é crítica em aplicações reais como:
+- **Ctrl+F em grandes arquivos**: Seu editor ou navegador deve responder instantaneamente a pesquisas, mesmo em textos de centenas de páginas.
 
-- **Análise de DNA**: Identificar sequências específicas em genomas com bilhões de nucleotídeos, essencial para pesquisas médicas e diagnósticos.
+- **Análise de genomas**: Laboratórios mapeiam trilhões de nucleotídeos para localizar sequências associadas a doenças. Cada segundo conta em diagnósticos e pesquisas médicas.
 
-- **Sistemas antivírus**: Detectar assinaturas de malware em tempo real em arquivos sendo verificados, onde atrasos podem comprometer a segurança.
+- **Detecção de malware**: Antivírus monitoram arquivos e pacotes de dados em tempo real. Um algoritmo lento pode permitir que uma ameaça se espalhe antes de ser identificada.
 
-- **Indexação de mecanismos de busca**: O Google processa bilhões de páginas web e precisa encontrar termos específicos em frações de segundo.
+- **Indexação de buscadores**: Mecanismos como o Google varrem a web constantemente; atrasos na indexação resultam em informação desatualizada para milhões de usuários.
 
-- **Compressão de dados**: Algoritmos como LZ77 precisam identificar padrões repetidos para substituí-los por referências mais curtas.
+Quando empregamos métodos ingênuos de comparação “caractere por caractere” (força bruta), acabamos com um custo inviável para grandes volumes de dados. É aqui que entram algoritmos de busca baseados em hashing e janela deslizante, capazes de reduzir drasticamente o tempo de execução.
 
-Se a busca de padrões for lenta, as consequências são graves:
+Neste handout, vamos explorar o Rabin–Karp, que une:
 
-1. Em sequenciadores de DNA, resultados atrasados podem impactar decisões médicas urgentes.
+1.	**Hash polinomial** para resumir trechos de texto em valores numéricos;
+2.	**Rolling hash** para atualizar esse valor em tempo constante ao mover a janela de busca.
 
-2. Em sistemas de segurança, ameaças podem passar despercebidas enquanto o sistema ainda está analisando dados anteriores.
-
-3. Em indexadores web, sites não seriam atualizados com frequência suficiente, resultando em informações desatualizadas.
-
-Por isso, algoritmos capazes de localizar padrões em grandes volumes de dados com eficiência são fundamentais para sistemas modernos.
+Vamos começar com algo bem simples:
 
 ??? Checkpoint
 
@@ -47,13 +44,15 @@ Considere que:
 
 ::: Gabarito
 
-A ideia do algoritmo de força bruta para resolver esse problema seria:
+Se você encontrou "garrafa" na posição em que aparece na quarta linha do texto, você está pegando o jeito...
+
+Agora veja como seria a ideia do algoritmo de força bruta para resolver esse problema:
 
 1. Percorrer o texto caractere por caractere
 2. Para cada posição, verificar se a sequência de caracteres a partir dali corresponde ao padrão "garrafa"
 3. Se houver correspondência, registrar a posição
 
-Usando essa abordagem, encontraríamos "garrafa" na posição em que aparece na quarta linha do texto.
+Você deve ter feito algo semelhante, não é mesmo?
 
 :::
 
@@ -320,32 +319,31 @@ Este resultado é exatamente igual ao que obtivemos através da atualização do
 ??? Atividade 5: Generalizando a fórmula
 Com base nos passos que fizemos, podemos generalizar uma fórmula para atualizar o hash polinomial quando a janela desliza. Se:
 
-- h_atual é o hash da janela atual
+- $h_{\text{atual}}$ é o hash da janela atual
 
-- primeiro_caractere é o caractere que sai da janela
+- $primeiro_{\text{caractere}}$ é o caractere que sai da janela
 
-- novo_caractere é o caractere que entra na janela
+- $novo_{\text{caractere}}$ é o caractere que entra na janela
 
-- b é a base (10 em nosso exemplo)
+- $b$ é a base (10 em nosso exemplo)
 
-- m é o tamanho da janela (3 em nosso exemplo)
+- $m$ é o tamanho da janela (3 em nosso exemplo)
 
 Como seria a fórmula completa?
 ::: Gabarito
 A fórmula geral para o rolling hash polinomial é:
 
-**h_novo = (h_atual - primeiro_caractere × b^(m-1)) × b + novo_caractere**
+$$h_{\text{novo}} \;=\;\bigl(h_{\text{atual}} \;-\; primeiro_{\text{caractere}}\times b^{\,m-1}\bigr)\times b \;+\; novo_{\text{caractere}}$$
 
 Explicando cada parte:
 
-- **primeiro_caractere × b^(m-1)**: contribuição do caractere que sai (na posição mais à esquerda)
+- $primeiro_{\text{caractere}}\times b^{\,m-1}$: contribuição do caractere que sai (na posição mais à esquerda)
 
-- **h_atual - (primeiro_caractere × b^(m-1))**: removendo esta contribuição
+- $h_{\text{atual}} - (primeiro_{\text{caractere}}\times b^{\,m-1})$: removendo esta contribuição
 
-- **(h_atual - primeiro_caractere × b^(m-1)) × b**: deslocando tudo uma posição para a esquerda
+- $(h_{\text{atual}} - primeiro_{\text{caractere}} \times b^{\,m-1}) \times b$: deslocando tudo uma posição para a esquerda
 
-
-- **novo_caractere**: adicionando o novo caractere na posição mais à direita
+- $novo_{\text{caractere}}$: adicionando o novo caractere na posição mais à direita
 
 :::
 ???
@@ -355,29 +353,31 @@ Suponha que já calculamos o hash polinomial de "CDE" como 345 (com base 10). Us
 ::: Gabarito
 Aplicando a fórmula:
 
-**h_novo = (h_atual - primeiro_caractere × b^(m-1)) × b + novo_caractere**
+$$h_{\text{novo}} = (h_{\text{atual}} - primeiro_{\text{caractere}} \times b^{m-1}) \times b + novo_{\text{caractere}}$$
 
 Temos:
 
-- h_atual = 345
+- $h_{\text{atual}}$ = 345
 
-- primeiro_caractere = C = 3
+- $primeiro_{\text{caractere}} = C = 3$
 
-- b = 10
+- $b = 10$
 
-- m = 3
+- $m = 3$
 
-- novo_caractere = F = 6
+- $novo_{\text{caractere}} = F = 6$
 
-h_novo = (345 - 3 × 10²) × 10 + 6
+Substituindo os números:
 
-= (345 - 300) × 10 + 6
+- $h_{\text{novo}} = (345 - 3 \times 10^2) \times 10 + 6$
 
-= 45 × 10 + 6
+- $= (345 - 300) \times 10 + 6$
 
-= 450 + 6
+- $= 45 \times 10 + 6$
 
-= 456
+- $= 450 + 6$
+
+- $= 456$
 
 Vamos verificar calculando diretamente:
 
@@ -415,25 +415,29 @@ Base: 10
 
 :rk
 
-- Passo 1: Calculamos o hash do padrão
+- **Passo 1: Calculamos o hash do padrão**
 
-Hash("ACGT") = A×10³ + C×10² + G×10¹ + T×10⁰ = 1×1000 + 3×100 + 7×10 + 20×1 = 1000 + 300 + 70 + 20 = 1390
+    1. Hash("ACGT") = A×10³ + C×10² + G×10¹ + T×10⁰ = 1×1000 + 3×100 + 7×10 + 20×1 = 1000 + 300 + 70 + 20 = 1390
 
-- Passo 2: Calculamos o hash da primeira janela
+- **Passo 2: Calculamos o hash da primeira janela**
 
-Hash("GTAT") = G×10³ + T×10² + A×10¹ + T×10⁰ = 7×1000 + 20×100 + 1×10 + 20×1 = 7000 + 2000 + 10 + 20 = 9030
-Hash diferente do padrão, continuamos.
+    1. Hash("GTAT") = G×10³ + T×10² + A×10¹ + T×10⁰ = 7×1000 + 20×100 + 1×10 + 20×1 = 7000 + 2000 + 10 + 20 = 9030
 
-- Passo 3: Usamos rolling hash para atualizar e verificar cada janela
+        - Hash diferente do padrão, continuamos.
 
-Hash("TATA") = (9030 - 7×10³)×10 + A = (9030 - 7000)×10 + 1 = 2030×10 + 1 = 20301
-Hash diferente do padrão, continuamos.
-Hash("ATAC") = (20301 - 2×10³)×10 + C = (20301 - 2000)×10 + 3 = 18301×10 + 3 = 183013
-Hash diferente do padrão, continuamos.
-Hash("TACG") = (183013 - 1×10³)×10 + G = (183013 - 1000)×10 + 7 = 182013×10 + 7 = 1820137
-Hash diferente do padrão, continuamos.
-Hash("ACGT") = (1820137 - 20×10³)×10 + T = (1820137 - 20000)×10 + 20 = 1800137×10 + 20 = 18001390
-Hash diferente do padrão?! Mas o padrão é "ACGT"! Isso poderia indicar um overflow ou um erro de cálculo.
+- **Passo 3: Usamos rolling hash para atualizar e verificar cada janela**
+
+    1. Hash("TATA") = (9030 - 7×10³)×10 + A = (9030 - 7000)×10 + 1 = 2030×10 + 1 = 20301
+        - Hash diferente do padrão, continuamos.
+
+    2. Hash("ATAC") = (20301 - 2×10³)×10 + C = (20301 - 2000)×10 + 3 = 18301×10 + 3 = 183013
+        - Hash diferente do padrão, continuamos.
+
+    3. Hash("TACG") = (183013 - 1×10³)×10 + G = (183013 - 1000)×10 + 7 = 182013×10 + 7 = 1820137
+        - Hash diferente do padrão, continuamos.
+
+    4. Hash("ACGT") = (1820137 - 20×10³)×10 + T = (1820137 - 20000)×10 + 20 = 1800137×10 + 20 = 18001390
+        - Hash diferente do padrão?! Mas o padrão é "ACGT"! Isso poderia indicar um overflow ou um erro de cálculo.
 
 Para implementações reais, usamos um módulo grande para evitar overflow, fazendo hash % q em cada cálculo.
 Independentemente, quando encontramos um match de hash, verificamos caractere por caractere para confirmar:
@@ -480,5 +484,5 @@ O algoritmo de Rabin-Karp nos mostra como ideias matemáticas (hash polinomial) 
 
 Embora não seja o algoritmo mais rápido para todos os cenários, sua capacidade de buscar múltiplos padrões simultaneamente o torna uma ferramenta valiosa no arsenal de qualquer cientista da computação ou engenheiro de software.
 
-Os conceitos que aprendemos aqui - hash, janela deslizante, rolling hash - são aplicáveis a muitos outros problemas além da busca de padrões, demonstrando como ideias fundamentais podem ter amplas aplicações.
+Os conceitos que aprendemos aqui - **hash, janela deslizante, rolling hash** - são aplicáveis a muitos outros problemas além da busca de padrões, demonstrando como ideias fundamentais podem ter amplas aplicações.
 
