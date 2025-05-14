@@ -232,63 +232,162 @@ Hash("CBA") = C × 10² + B × 10¹ + A × 10⁰ = 3 × 100 + 2 × 10 + 1 × 1 =
 
 Observe que agora "ABC" (123) e "CBA" (321) têm hashes diferentes! O hash polinomial é muito mais eficaz para distinguir strings diferentes, embora ainda possam ocorrer colisões (isso é matematicamente inevitável para qualquer função hash).
 
-??? Desafio
+## Colisões no Hash Polinomial
 
-Vamos verificar isso. Consegue encontrar duas strings diferentes de 3 letras que teriam o mesmo hash polinomial usando base 10? (Use apenas as letras A=1, B=2, C=3, D=4, E=5)
+Embora o hash polinomial reduza significativamente as colisões em comparação com o hash por soma, é importante entender que colisões ainda podem ocorrer. Vamos ver alguns exemplos concretos:
 
-::: Gabarito
-É mais difícil, mas ainda possível. Por exemplo:
+**Exemplo 1**: Colisão em base 2
 
-- Hash("AAB") = 1 × 10² + 1 × 10¹ + 2 × 10⁰ = 100 + 10 + 2 = 112
-- Hash("BAC") = 2 × 10² + 1 × 10¹ + 3 × 10⁰ = 200 + 10 + 3 = 213
+Usando base 2 (binária) e os valores a=1, b=2, c=3:
 
-Essas duas strings têm hashes diferentes. Na verdade, com apenas 5 letras e 3 posições, é difícil encontrar colisões com o hash polinomial e base 10.
-Com mais caracteres e strings mais longas, as colisões eventualmente aconteceriam, mas são muito menos frequentes que no hash por soma.
+- Hash("aba") = 1 × 2² + 2 × 2¹ + 1 × 2⁰ = 1 × 4 + 2 × 2 + 1 × 1 = 4 + 4 + 1 = 9
+- Hash("aac") = 1 × 2² + 1 × 2¹ + 3 × 2⁰ = 1 × 4 + 1 × 2 + 3 × 1 = 4 + 2 + 3 = 9
 
-:::
-???
+Veja que "aba" e "aac" são strings completamente diferentes, ambas com 3 caracteres, mas resultam no mesmo valor de hash: 9!
+
+**Exemplo 2**: Colisão em base 5
+
+Se usarmos base 5:
+
+- Hash("aba") = 1 × 5² + 2 × 5¹ + 1 × 5⁰ = 1 × 25 + 2 × 5 + 1 × 1 = 25 + 10 + 1 = 36
+- Hash("aaf") = 1 × 5² + 1 × 5¹ + 6 × 5⁰ = 1 × 25 + 1 × 5 + 6 × 1 = 25 + 5 + 6 = 36
+
+Novamente, duas strings diferentes ("aba" e "aaf") com o mesmo hash (36).
+
+É interessante notar que, conforme aumentamos a base, as colisões se tornam mais raras. Para bases maiores como 10 ou 256 (usadas em implementações reais), colisões entre strings curtas são muito menos prováveis, mas ainda possíveis teoricamente.
+
+Estes exemplos demonstram por que o algoritmo Rabin-Karp sempre realiza uma verificação caractere por caractere quando encontra hashes iguais - não podemos confiar apenas no hash para determinar se as strings são idênticas.
 
 
 ## Rolling Hash Polinomial: O Coração do Rabin-Karp
 
 Agora vem a parte mais legal: podemos aplicar o conceito de rolling hash também ao hash polinomial!
 
-??? Atividade
-Temos o texto "ABCDE" e queremos mover nossa janela de tamanho 3. Se já calculamos o hash polinomial de "ABC" como 123 (usando base 10), como poderíamos calcular o hash de "BCD" de forma eficiente?
+Se já calculamos o hash da primeira janela, podemos atualizar eficientemente o hash para a próxima janela sem recalcular tudo do zero. Vamos explorar como fazer isso passo a passo para esse novo modelo:
 
-Dica: Pense no que acontece matematicamente quando removemos 'A' do início e adicionamos 'D' ao final.
+??? Atividade 1: Removendo a contribuição do primeiro caractere
+Se Hash("ABC") = A×10² + B×10¹ + C×10⁰ = 123, qual seria o resultado se removêssemos a contribuição do caractere 'A'?
+
 ::: Gabarito
-Quando passamos de "ABC" para "BCD":
+A contribuição do 'A' é A×10². Como A=1, temos 1×100 = 100.
 
-Primeiro, removemos a contribuição do 'A':
+- Removendo esta contribuição: 123 - 100 = 23
 
-- Hash("ABC") = A × 10² + B × 10¹ + C × 10⁰ = 123
-- Sem o A: Hash - (A × 10²) = 123 - (1 × 100) = 123 - 100 = 23
+- Restou B×10¹ + C×10⁰ = 2×10 + 3×1 = 23
+:::
+???
+
+??? Atividade 2: Ajustando as posições
+Depois de remover a contribuição do primeiro caractere, temos B×10¹ + C×10⁰ = 23.
+
+Mas na nova janela "BCD", o 'B' deveria estar na posição 10² e o 'C' na posição 10¹.
+Como podemos fazer esse ajuste matematicamente?
+
+::: Gabarito
+Precisamos multiplicar tudo por 10 para "deslocar" os caracteres uma posição para a esquerda:
+(B×10¹ + C×10⁰) × 10 = B×10² + C×10¹
+
+Em termos do valor: 23 × 10 = 230
+
+Agora temos B na posição correta (10²) e C na posição correta (10¹).
+:::
+???
+
+??? Atividade 3: Adicionando o novo caractere
+Depois de ajustar as posições, temos B×10² + C×10¹ = 230.
+Como adicionamos a contribuição do novo caractere 'D' que entrou na janela?
+
+::: Gabarito
+O novo caractere 'D' entra na posição 10⁰ (à direita). Como D=4, sua contribuição é 4×1 = 4.
+
+- Adicionando ao resultado anterior: 230 + 4 = 234
+
+- Agora temos o hash completo: B×10² + C×10¹ + D×10⁰ = 234
+:::
+???
+
+??? Atividade 4: Verificando o resultado
+Vamos verificar se nosso método de atualização está correto, calculando o hash de "BCD" do zero:
+Hash("BCD") = B×10² + C×10¹ + D×10⁰ = ?
+
+::: Gabarito
+Hash("BCD") = 2×10² + 3×10¹ + 4×10⁰ = 200 + 30 + 4 = 234
+
+Este resultado é exatamente igual ao que obtivemos através da atualização do hash anterior! 
+:::
+???
+
+??? Atividade 5: Generalizando a fórmula
+Com base nos passos que fizemos, podemos generalizar uma fórmula para atualizar o hash polinomial quando a janela desliza. Se:
+
+- h_atual é o hash da janela atual
+
+- primeiro_caractere é o caractere que sai da janela
+
+- novo_caractere é o caractere que entra na janela
+
+- b é a base (10 em nosso exemplo)
+
+- m é o tamanho da janela (3 em nosso exemplo)
+
+Como seria a fórmula completa?
+::: Gabarito
+A fórmula geral para o rolling hash polinomial é:
+
+**h_novo = (h_atual - primeiro_caractere × b^(m-1)) × b + novo_caractere**
+
+Explicando cada parte:
+
+- **primeiro_caractere × b^(m-1)**: contribuição do caractere que sai (na posição mais à esquerda)
+
+- **h_atual - (primeiro_caractere × b^(m-1))**: removendo esta contribuição
+
+- **(h_atual - primeiro_caractere × b^(m-1)) × b**: deslocando tudo uma posição para a esquerda
 
 
-Agora, precisamos "deslocar" o que sobrou para abrir espaço para o novo dígito:
-
-- 23 × 10 = 230
-
-
-Finalmente, adicionamos o novo dígito 'D':
-
-230 + D = 230 + 4 = 234
-
-
-
-Verificando: 
-- B × 10² + C × 10¹ + D × 10⁰ 
-- = 2 × 100 + 3 × 10 + 4 × 1 
-- = 200 + 30 + 4 = 234 ✓
-
-A fórmula geral seria:
-
-- h_novo = (h_atual - primeiro_caractere × b^(m-1)) × b + novo_caractere
+- **novo_caractere**: adicionando o novo caractere na posição mais à direita
 
 :::
 ???
-Com esta abordagem, podemos atualizar eficientemente o hash à medida que deslizamos a janela pelo texto, com tempo constante por atualização.
+
+??? Atividade 6: Aplicando na prática
+Suponha que já calculamos o hash polinomial de "CDE" como 345 (com base 10). Usando a fórmula que derivamos, calcule o hash de "DEF" se F=6.
+::: Gabarito
+Aplicando a fórmula:
+
+**h_novo = (h_atual - primeiro_caractere × b^(m-1)) × b + novo_caractere**
+
+Temos:
+
+- h_atual = 345
+
+- primeiro_caractere = C = 3
+
+- b = 10
+
+- m = 3
+
+- novo_caractere = F = 6
+
+h_novo = (345 - 3 × 10²) × 10 + 6
+
+= (345 - 300) × 10 + 6
+
+= 45 × 10 + 6
+
+= 450 + 6
+
+= 456
+
+Vamos verificar calculando diretamente:
+
+Hash("DEF") = D×10² + E×10¹ + F×10⁰ 
+
+= 4×100 + 5×10 + 6×1 = 400 + 50 + 6 = 456 ✓
+
+:::
+???
+Com esta abordagem, conseguimos atualizar o hash em tempo constante a cada passo, tornando o algoritmo muito mais eficiente.
 
 ## O algoritmo de Rabin-Karp
 
