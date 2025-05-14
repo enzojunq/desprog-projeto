@@ -411,6 +411,10 @@ Texto: "GTATACGT"
 Padrão: "ACGT"
 Base: 10
 
+![](rk01.png)
+
+:rk
+
 - Passo 1: Calculamos o hash do padrão
 
 Hash("ACGT") = A×10³ + C×10² + G×10¹ + T×10⁰ = 1×1000 + 3×100 + 7×10 + 20×1 = 1000 + 300 + 70 + 20 = 1390
