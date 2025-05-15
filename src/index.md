@@ -402,7 +402,84 @@ Para cada posição do texto:
 - Se forem iguais, verificar caractere por caractere (para evitar falsos positivos devido a colisões)
 - Atualizar o hash para a próxima janela usando o rolling hash
 
+??? Atividade
+Agora tente você mesmo!
 
+- Seu objetivo é demonstrar passo a passo o que o algorítmo faria para encontrar o padrão “ACGT” pelo seu hash.
+
+- Considere o texto “GTATACGT”.
+
+Tente ao menos começar, caso não consiga, há uma dica abaixo.
+
+::: Dica
+A dica é, você deve começar calculando o hash da combinação que está procurando (lembre-se da base que estamos utilizando)!
+
+1. Hash do padrão "ACGT"
+$$
+1\cdot10^3 + 3\cdot10^2 + 7\cdot10^1 + 20\cdot10^0
+= 1000 + 300 + 70 + 20
+= \mathbf{1390}
+$$
+
+::: Gabarito
+Após calcular o hash da combinação que estamos procurando, o **Rabin-Karp** fará os passos abaixo:
+
+2. Hash da 1ª janela "GTAT"
+$$
+7\cdot10^3 + 20\cdot10^2 + 1\cdot10^1 + 20\cdot10^0
+= 7000 + 2000 + 10 + 20
+= \mathbf{9030}
+$$
+
+3. Rolling hash
+
+    - "TATA"
+$$
+(9030 - 7\cdot10^3)\times10 + 1
+= (9030 - 7000)\times10 + 1
+$$
+$$
+= 2030\times10 + 1
+= \mathbf{20301}
+$$
+
+    - "ATAC"
+$$
+(20301 - 20\cdot10^3)\times10 + 3
+= (20301 - 20000)\times10 + 3
+$$
+$$
+= 301\times10 + 3
+= \mathbf{3013}
+$$
+
+    - "TACG"
+$$
+(3013 - 1\cdot10^3)\times10 + 7
+= (3013 - 1000)\times10 + 7
+$$
+$$
+= 2013\times10 + 7
+= \mathbf{20137}
+$$
+
+    - "ACGT"
+$$
+(20137 - 20\cdot10^3)\times10 + 20
+= (20137 - 20000)\times10 + 20
+$$
+$$
+= 137\times10 + 20
+= \mathbf{1390}
+$$
+
+4. Comparação final
+    - Neste último passo o hash volta a ser 1390, igual ao do padrão → possível match.
+    - Para confirmar, fazemos a verificação caractere a caractere: "ACGT" == "ACGT".
+
+:::
+
+???
 
 
 Vamos visualizar esse processo:
@@ -415,74 +492,21 @@ Base: 10
 
 :rk
 
-- **Passo 1: Calculamos o hash do padrão**
-
-    1. Hash("ACGT") = A×10³ + C×10² + G×10¹ + T×10⁰ = 1×1000 + 3×100 + 7×10 + 20×1 = 1000 + 300 + 70 + 20 = 1390
-
-- **Passo 2: Calculamos o hash da primeira janela**
-
-    1. Hash("GTAT") = G×10³ + T×10² + A×10¹ + T×10⁰ = 7×1000 + 20×100 + 1×10 + 20×1 = 7000 + 2000 + 10 + 20 = 9030
-
-        - Hash diferente do padrão, continuamos.
-
-- **Passo 3: Usamos rolling hash para atualizar e verificar cada janela**
-
-    1. Hash("TATA") = (9030 - 7×10³)×10 + A = (9030 - 7000)×10 + 1 = 2030×10 + 1 = 20301
-        - Hash diferente do padrão, continuamos.
-
-    2. Hash("ATAC") = (20301 - 2×10³)×10 + C = (20301 - 2000)×10 + 3 = 18301×10 + 3 = 183013
-        - Hash diferente do padrão, continuamos.
-
-    3. Hash("TACG") = (183013 - 1×10³)×10 + G = (183013 - 1000)×10 + 7 = 182013×10 + 7 = 1820137
-        - Hash diferente do padrão, continuamos.
-
-    4. Hash("ACGT") = (1820137 - 20×10³)×10 + T = (1820137 - 20000)×10 + 20 = 1800137×10 + 20 = 18001390
-        - Hash diferente do padrão?! Mas o padrão é "ACGT"! Isso poderia indicar um overflow ou um erro de cálculo.
-
 Para implementações reais, usamos um módulo grande para evitar overflow, fazendo hash % q em cada cálculo.
 Independentemente, quando encontramos um match de hash, verificamos caractere por caractere para confirmar:
 
-## Resumo
+## Hora do conhecimento final!
 
-Quando o **Rabin-Karp** é melhor?
-
-O algoritmo de Rabin-Karp tem algumas características interessantes:
-
-- Complexidade média: O(n + m) quando bem implementado
-- Complexidade no pior caso: O(n × m) quando há muitas colisões
-
-O algoritmo se destaca especialmente em:
-
-- Detecção de plágio: sistemas que precisam verificar se um documento contém trechos copiados de vários outros documentos.
-- Busca de múltiplos padrões: quando precisamos encontrar vários padrões diferentes no mesmo texto, o Rabin-Karp é muito eficiente, pois podemos reaproveitar o hash da janela atual para comparar com os hashes de todos os padrões.
-- Sistemas de segurança de rede: busca de múltiplas assinaturas de malware em pacotes de dados simultaneamente.
+??? Checkpoint
+O que a **detecção de plágio**, uma **busca de múltiplos padrões** e um **sistema de segurança de rede** tem em comum?
 
 
----
-
-## Comparando com outros algoritmos:
-
-Comparado a outros algoritmos de busca de padrões:
-
-
-| Algoritmo              | Melhor caso                | Caso médio                      | Pior caso            |
-|------------------------|----------------------------|---------------------------------|----------------------|
-| **Knuth–Morris–Pratt** | {red}($O(n + m)$)          | $O(n + m)$                      | {green}($O(n + m)$)  |
-| **Boyer–Moore**        | {green}($O(n / m)$) *(sublinear)*   | $O(n + m)$                      | {red}($O(n × m)$)  |
-| **Rabin–Karp**         | {red}($O(n + m)$)          | $O(n + m)$ *(esperado)*         | {red}($O(n × m)$)    |
-
-
-Cada algoritmo tem seu lugar, dependendo do cenário:
-
-- **KMP**: Garantia de desempenho constante, ideal quando precisamos de tempo previsível
-- **Boyer-Moore**: Extremamente rápido para padrões longos e alfabetos grandes
-- **Rabin-Karp**: Ideal para buscar múltiplos padrões simultaneamente
-
-## Conclusão
-
-O algoritmo de Rabin-Karp nos mostra como ideias matemáticas (hash polinomial) e técnicas algorítmicas (janela deslizante) podem se combinar para resolver problemas complexos de forma eficiente.
-
-Embora não seja o algoritmo mais rápido para todos os cenários, sua capacidade de buscar múltiplos padrões simultaneamente o torna uma ferramenta valiosa no arsenal de qualquer cientista da computação ou engenheiro de software.
-
-Os conceitos que aprendemos aqui - **hash, janela deslizante, rolling hash** - são aplicáveis a muitos outros problemas além da busca de padrões, demonstrando como ideias fundamentais podem ter amplas aplicações.
-
+::: Gabarito
+Ops... achou mesmo que seria tão fácil assim? Antes de ver o gabarito abaixo pense um pouco mais! Você acabou de chegar na última questão...
+::: Gabarito
+Essas são algumas das aplicações que o **Rabin-Karp** se destacaria de outros algorítmos, veja mais abaixo:
+- **Detecção de plágio**: sistemas que precisam verificar se um documento contém trechos copiados de vários outros documentos.
+- **Busca de múltiplos padrões**: quando precisamos encontrar vários padrões diferentes no mesmo texto, o Rabin-Karp é muito eficiente, pois podemos reaproveitar o hash da janela atual para comparar com os hashes de todos os padrões.
+- **Sistemas de segurança de rede**: busca de múltiplas assinaturas de malware em pacotes de dados simultaneamente.
+:::
+???
