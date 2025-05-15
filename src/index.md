@@ -255,7 +255,6 @@ Novamente, duas strings diferentes ("aba" e "aaf") com o mesmo hash (36).
 
 É interessante notar que, conforme aumentamos a base, as colisões se tornam mais raras. Para bases maiores como 10 ou 256 (usadas em implementações reais), colisões entre strings curtas são muito menos prováveis, mas ainda possíveis teoricamente.
 
-Estes exemplos demonstram por que o algoritmo Rabin-Karp sempre realiza uma verificação caractere por caractere quando encontra hashes iguais - não podemos confiar apenas no hash para determinar se as strings são idênticas.
 
 
 ## Rolling Hash Polinomial: O Coração do Rabin-Karp
@@ -490,10 +489,10 @@ Base: 10
 
 ![](rk01.png)
 
+---
+
 :rk
 
-Para implementações reais, usamos um módulo grande para evitar overflow, fazendo hash % q em cada cálculo.
-Independentemente, quando encontramos um match de hash, verificamos caractere por caractere para confirmar:
 
 ## Hora do conhecimento final!
 
