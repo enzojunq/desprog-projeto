@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Visualização do Rabin-Karp</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        textarea,
+        input[type="text"] {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button#runBtn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            color: #fff;
+            background-color: #0052cc;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        /* Carousel styles */
+        .carousel {
+            position: relative;
+            overflow: hidden;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        .slides {
+            display: flex;
+            /* Removida a animação */
+        }
+
+        .slide {
+            min-width: 100%;
+            box-sizing: border-box;
+            padding: 25px;
+            background: #fff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #0052cc;
+        }
+
+        .slide-text {
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            background: #f7f9fc;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        .slide-info {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1rem;
+            color: #444;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #f7f9fc;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .step-number {
+            font-size: 0.9rem;
+            color: #0052cc;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .hash-info {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hash-label {
+            font-weight: 600;
+        }
+
+        .match-indicator {
+            grid-column: 1 / -1;
+            background-color: #acf2bd;
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .carousel button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #0052cc;
+            border: none;
+            color: #fff;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            transition: background 0.2s;
+        }
+
+        .carousel button:hover {
+            background: #003d99;
+        }
+
+        .carousel .prev {
+            left: 10px;
+        }
+
+        .carousel .next {
+            right: 10px;
+        }
+
+        .steps-navigation {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+            gap: 5px;
+        }
+
+        .step-indicator {
+            width: 10px;
+            height: 10px;
+            background: #ccc;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .step-indicator.active {
+            background: #0052cc;
+        }
+
+        .match {
+            background-color: #acf2bd;
+        }
+
+        .highlight {
+            background-color: #ffeb99;
+        }
+
+        .index-list {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f0f8ff;
+            border-radius: 6px;
+            border-left: 4px solid #0052cc;
+        }
+
+        .index-badge {
+            display: inline-block;
+            background-color: #0052cc;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            margin: 0 4px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .char-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(30px, 1fr));
+            gap: 5px;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            font-family: monospace;
+        }
+
+        .char-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .char-label {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .char-match {
+            background-color: #e6ffec;
+            border-color: #acf2bd;
+        }
+
+        .char-mismatch {
+            background-color: #ffebe9;
+            border-color: #ffc0c0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Visualização do Rabin-Karp</h1>
+
+        <label for="text">Texto:</label>
+        <textarea id="text" rows="4" placeholder="Digite o texto..."></textarea>
+
+        <label for="pattern">Padrão:</label>
+        <input id="pattern" type="text" placeholder="Digite o padrão...">
+
+        <div style="margin-bottom: 10px;">
+            <label><input type="radio" name="mode" value="final" checked> Resultado Final</label>
+            <label style="margin-left: 20px;"><input type="radio" name="mode" value="step"> Passo a Passo</label>
+        </div>
+
+        <button id="runBtn">Executar Busca</button>
+
+        <div id="result"></div>
+        <div id="steps"></div>
+    </div>
+
+    <script>
+        // Parâmetros do hash polinomial
+        const d = 37; // Valor menor para evitar estouro numérico
+        // Removida a normalização com módulo
+
+        function computeHash(str, m) {
+            let h = 0;
+            for (let i = 0; i < m; i++) {
+                h = d * h + str.charCodeAt(i);
+            }
+            return h;
+        }
+
+        function rabinKarpSearch(text, pattern) {
+            const n = text.length, m = pattern.length;
+            if (m > n) return [];
+            const hFactor = Math.pow(d, m - 1); // Sem módulo
+            let pHash = computeHash(pattern, m);
+            let tHash = computeHash(text, m);
+            const matches = [];
+
+            for (let i = 0; i <= n - m; i++) {
+                const window = text.substr(i, m);
+                // Verificar tanto hash quanto string diretamente para evitar problemas de precisão
+                if ((pHash === tHash || window === pattern) && window === pattern) {
+                    matches.push(i);
+                }
+                if (i < n - m) {
+                    tHash = d * (tHash - text.charCodeAt(i) * hFactor) + text.charCodeAt(i + m);
+                    // Removida a normalização com módulo
+                }
+            }
+            return matches;
+        }
+
+        function rabinKarpSteps(text, pattern) {
+            const n = text.length, m = pattern.length;
+            const steps = [];
+            if (m > n) return steps;
+            const hFactor = Math.pow(d, m - 1); // Sem módulo
+            let pHash = computeHash(pattern, m);
+            let tHash = computeHash(text, m);
+
+            for (let i = 0; i <= n - m; i++) {
+                const window = text.substr(i, m);
+
+                // Comparação de strings direta para evitar problemas com precisão numérica
+                const stringMatch = window === pattern;
+                const isCandidate = (tHash === pHash) || stringMatch;
+
+                // Adicionar comparação caractere por caractere quando encontrar candidato
+                let charComparison = null;
+                if (isCandidate) {
+                    charComparison = [];
+                    let isMatch = true;
+                    for (let j = 0; j < m; j++) {
+                        const patternChar = pattern[j];
+                        const textChar = text[i + j];
+                        const charMatches = patternChar === textChar;
+                        if (!charMatches) isMatch = false;
+
+                        charComparison.push({
+                            patternChar,
+                            textChar,
+                            matches: charMatches,
+                            index: j
+                        });
+                    }
+                }
+
+                steps.push({
+                    i,
+                    window,
+                    tHash,
+                    pHash,
+                    isCandidate,
+                    charComparison,
+                    stringMatch,
+                    isMatch: isCandidate && charComparison && charComparison.every(c => c.matches)
+                });
+
+                if (i < n - m) {
+                    tHash = d * (tHash - text.charCodeAt(i) * hFactor) + text.charCodeAt(i + m);
+                    // Removida a normalização com módulo
+                }
+            }
+            return steps;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>\"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": "&#39;" })[m]);
+        }
+
+        function highlightTextAt(text, pos, len, cls) {
+            const before = escapeHtml(text.slice(0, pos));
+            const mid = escapeHtml(text.slice(pos, pos + len));
+            const after = escapeHtml(text.slice(pos + len));
+            return `${before}<span class="${cls}">${mid}</span>${after}`;
+        }
+
+        document.getElementById('runBtn').addEventListener('click', () => {
+            const text = document.getElementById('text').value;
+            const pattern = document.getElementById('pattern').value;
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const resultDiv = document.getElementById('result');
+            const stepsDiv = document.getElementById('steps');
+            resultDiv.innerHTML = '';
+            stepsDiv.innerHTML = '';
+
+            if (!pattern) {
+                alert('Informe um padrão para buscar.');
+                return;
+            }
+
+            if (mode === 'final') {
+                const matches = rabinKarpSearch(text, pattern);
+                if (matches.length === 0) {
+                    resultDiv.textContent = 'Padrão não encontrado.';
+                    return;
+                }
+
+                // Mostrar texto com ocorrências destacadas
+                let last = 0, html = '';
+                for (let idx of matches) {
+                    html += escapeHtml(text.slice(last, idx));
+                    html += `<span class="match">${escapeHtml(text.substr(idx, pattern.length))}</span>`;
+                    last = idx + pattern.length;
+                }
+                html += escapeHtml(text.slice(last));
+
+                // Adicionar lista de índices
+                let indexesHtml = '<div class="index-list"><strong>Índices encontrados:</strong> ';
+                indexesHtml += matches.map(idx => `<span class="index-badge">${idx}</span>`).join(' ');
+                indexesHtml += '</div>';
+
+                resultDiv.innerHTML = `<h2>Resultado Final</h2><div>${html}</div>${indexesHtml}`;
+
+            } else {
+                const steps = rabinKarpSteps(text, pattern);
+                stepsDiv.innerHTML = '<h2>Passo a Passo</h2>';
+
+                // Carousel container
+                const carousel = document.createElement('div');
+                carousel.className = 'carousel';
+                const slides = document.createElement('div');
+                slides.className = 'slides';
+
+                steps.forEach((s, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'slide';
+
+                    // Preparar o HTML para a comparação caractere por caractere
+                    let charComparisonHtml = '';
+                    if (s.charComparison) {
+                        charComparisonHtml = `
+                        <div style="margin-top: 15px;">
+                            <h4>Verificação caractere a caractere:</h4>
+                            <div class="char-comparison">
+                                ${s.charComparison.map(c => `
+                                    <div class="char-box ${c.matches ? 'char-match' : 'char-mismatch'}">
+                                        <div class="char-content">${escapeHtml(c.textChar) || ' '}</div>
+                                        <div class="char-label">Texto</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="char-comparison">
+                                ${s.charComparison.map(c => `
+                                    <div class="char-box ${c.matches ? 'char-match' : 'char-mismatch'}">
+                                        <div class="char-content">${escapeHtml(c.patternChar) || ' '}</div>
+                                        <div class="char-label">Padrão</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                                                            <div style="margin-top: 10px; font-weight: bold; text-align: center;">
+                                ${s.isMatch ?
+                                '<span style="color: green;">✓ Correspondência confirmada!</span>' :
+                                '<span style="color: red;">✗ Falsa correspondência de hash (colisão)</span>'}
+                            </div>
+                            <div style="margin-top: 5px; font-size: 0.9em; color: #666; text-align: center;">
+                                ${s.stringMatch ?
+                                'As strings são idênticas.' :
+                                'As strings são diferentes.'}
+                                ${(s.tHash === s.pHash) ?
+                                ' Os hashes são idênticos.' :
+                                ` <span style="color: orange;">Diferença de hash: ${Math.abs(s.tHash - s.pHash)}</span>`}
+                            </div>
+                        </div>`;
+                    }
+
+                    slide.innerHTML = `
+            <div class="step-number">Passo ${index + 1} de ${steps.length}</div>
+            <div class="slide-text">
+              ${highlightTextAt(text, s.i, pattern.length, 'highlight')}
+            </div>
+            <div class="slide-info">
+              <div class="hash-info">
+                <span class="hash-label">Posição:</span> ${s.i}
+                <span class="hash-label">Janela:</span> "${escapeHtml(s.window)}"
+              </div>
+              <div class="hash-info">
+                <span class="hash-label">Hash da janela:</span> ${s.tHash}
+                <span class="hash-label">Hash do padrão:</span> ${s.pHash}
+              </div>
+              <div class="match-indicator" style="${s.isCandidate ? 'display: block' : ''}">
+                ✓ Possível ocorrência encontrada!
+              </div>
+            </div>
+            ${s.isCandidate ? charComparisonHtml : ''}`;
+                    slides.appendChild(slide);
+                });
+                carousel.appendChild(slides);
+
+                // Nav buttons
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'prev'; prevBtn.innerHTML = '&#10094;';
+                prevBtn.title = 'Passo anterior';
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'next'; nextBtn.innerHTML = '&#10095;';
+                nextBtn.title = 'Próximo passo';
+
+                carousel.appendChild(prevBtn);
+                carousel.appendChild(nextBtn);
+                stepsDiv.appendChild(carousel);
+
+                // Adicionar indicadores de passos
+                const stepsNav = document.createElement('div');
+                stepsNav.className = 'steps-navigation';
+                steps.forEach((_, idx) => {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'step-indicator';
+                    indicator.dataset.step = idx;
+                    stepsNav.appendChild(indicator);
+                });
+                stepsDiv.appendChild(stepsNav);
+
+                // Carousel logic
+                let currentIndex = 0;
+                function updateCarousel() {
+                    slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+                    // Atualizar indicadores
+                    document.querySelectorAll('.step-indicator').forEach((ind, idx) => {
+                        ind.classList.toggle('active', idx === currentIndex);
+                    });
+                }
+
+                prevBtn.addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        currentIndex--;
+                        updateCarousel();
+                    }
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    if (currentIndex < steps.length - 1) {
+                        currentIndex++;
+                        updateCarousel();
+                    }
+                });
+
+                // Permitir clique nos indicadores
+                document.querySelectorAll('.step-indicator').forEach((ind) => {
+                    ind.addEventListener('click', () => {
+                        currentIndex = parseInt(ind.dataset.step);
+                        updateCarousel();
+                    });
+                });
+
+                // Inicializar o carrossel
+                updateCarousel();
+            }
+        });
+    </script>
+</body>
+
+</html>
