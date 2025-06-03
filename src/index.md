@@ -122,6 +122,10 @@ Como podemos calcular:
 - O hash da palavra ACE
 - O hash da palavra BED
 
+!!! Dica
+Não é só "grudar" os números das letras! Pense em como combinar matematicamente os valores para criar um único número que represente a palavra.
+!!!
+
 ::: Gabarito
 
 O hash é calculado através da soma do valor de cada uma das letras:
@@ -194,7 +198,7 @@ O **hash polinomial** é uma função hash mais sofisticada que considera tanto 
 A ideia é tratar a string como um número em uma base específica (geralmente 256, que é o número de caracteres ASCII).
 Para a string "ABC":
 
-Hash("ABC") = A × b² + B × b¹ + C × b⁰
+**Hash("ABC") = A × b² + B × b¹ + C × b⁰**
 
 Onde b é a base (como 256 ou 10 para exemplos mais simples).
 Isso é semelhante a como interpretamos números decimais.
