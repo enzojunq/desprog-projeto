@@ -1,4 +1,4 @@
-# Busca de Padrões em Texto
+# Busca de Padrões em Texto - Algoritmo de Rabin-Karp
 
 ## Busca de Padrões em Texto: Por que é tão importante otimizar?
 Imagine que você precisa encontrar, em segundos, todas as ocorrências de uma palavra ou sequência de caracteres em documentos enormes ou em bases de dados complexas. Situações reais em que a velocidade de busca faz toda a diferença:
@@ -44,19 +44,13 @@ Considere que:
 
 ::: Gabarito
 
-Se você encontrou "garrafa" na posição em que aparece na quarta linha do texto, você está pegando o jeito...
-
-Agora veja como seria a ideia do algoritmo de força bruta para resolver esse problema:
-
-1. Percorrer o texto caractere por caractere
-2. Para cada posição, verificar se a sequência de caracteres a partir dali corresponde ao padrão "garrafa"
-3. Se houver correspondência, registrar a posição
-
-Você deve ter feito algo semelhante, não é mesmo?
+Uma abordagem geral seria percorrer o texto e comparar, posição por posição, se encontramos a sequência de caracteres que corresponde ao padrão buscado.
 
 :::
 
 ???
+
+Essa abordagem intuitiva de verificar posição por posição é exatamente o que chamamos de **algoritmo de força bruta** para busca de padrões. Vamos formalizar como isso funciona:
 
 ## Janela Deslizante: O conceito fundamental
 
@@ -492,6 +486,33 @@ Base: 10
 ---
 
 :rk
+
+
+## Análise de Complexidade: O Problema das Colisões
+
+O Rabin-Karp é eficiente, mas sua performance **depende diretamente da quantidade de colisões** de hash que ocorrem durante a busca.
+
+## Melhor Caso vs Pior Caso
+
+**Melhor caso (poucas colisões):** 
+- Rolling hash atualizado em O(1) para cada posição
+- Poucas verificações caractere por caractere
+- **Complexidade: O(n + m)**
+
+**Pior caso (muitas colisões):**
+- Hash coincide em todas as posições → verificação caractere por caractere sempre
+- **Complexidade: O(n × m)** - igual ao força bruta!
+
+
+**Por que as Colisões são Problemáticas?**
+O ponto central é: sempre que há colisão de hash, precisamos verificar caractere por caractere. Se isso acontece muito, perdemos toda a vantagem do rolling hash.
+
+| Caso | Complexidade | Quando ocorre |
+|------|-------------|---------------|
+| **Melhor/Médio** | O(n + m) | Poucas colisões |
+| **Pior** | O(n × m) | Muitas colisões |
+
+A **escolha da função hash** é crucial para manter a eficiência!
 
 
 ## Hora do conhecimento final!
