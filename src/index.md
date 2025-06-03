@@ -92,17 +92,17 @@ Vamos analisar um exemplo de como a busca por força bruta funciona ao tentar en
 :bruta
 
 ??? Atividade
-Considere a complexidade do algoritmo de força bruta. Se o texto tem tamanho n e o padrão tem tamanho m:
+Considere a complexidade do algoritmo de força bruta. Se o **texto tem tamanho n** e o **padrão tem tamanho m**, responda:
 
-Quantas posições potenciais precisamos verificar no texto?
-Para cada posição, no pior caso, quantas comparações de caracteres fazemos?
-Qual seria a complexidade total do algoritmo em termos de n e m?
+1. Quantas posições potenciais precisamos verificar no texto?
+2. Para cada posição, no pior caso, quantas comparações de caracteres fazemos?
+3. Qual seria a complexidade total do algoritmo em termos de n e m?
 
 ::: Gabarito
 
-Precisamos verificar aproximadamente n posições no texto (mais precisamente, n-m+1 posições).
-Para cada posição, no pior caso, fazemos m comparações de caracteres.
-A complexidade total do algoritmo é O(n × m), pois para cada uma das n posições, podemos precisar fazer até m comparações.
+1. Precisamos verificar aproximadamente n posições no texto (mais precisamente, n-m+1 posições).
+2. Para cada posição, no pior caso, fazemos m comparações de caracteres.
+3. A complexidade total do algoritmo é O(n × m), pois para cada uma das n posições, podemos precisar fazer até m comparações.
 
 :::
 ???
